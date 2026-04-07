@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>Kelompok 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #eef2ff;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.bg-glow {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 10%, rgba(167,139,250,.25) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 90%, rgba(147,197,253,.3) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 70% 5%,  rgba(249,168,212,.2) 0%, transparent 50%);
+}
+
+.page { position: relative; z-index: 1; max-width: 420px; margin: 0 auto; padding: 0 20px 80px; }
+
+.topbar { padding: 48px 0 20px; display: flex; align-items: flex-start; justify-content: space-between; }
+.topbar-left h1 { font-size: 26px; font-weight: 800; color: #1e1b4b; letter-spacing: -.03em; line-height: 1; }
+.topbar-left p  { font-size: 12px; color: #7c7aaa; margin-top: 4px; font-weight: 500; }
+
+.online-dot {
+  display: flex; align-items: center; gap: 6px;
+  background: white; border: 1px solid #e0e7ff;
+  border-radius: 99px; padding: 6px 12px;
+  font-size: 11px; font-weight: 600; color: #6366f1;
+  margin-top: 4px; box-shadow: 0 2px 8px rgba(99,102,241,.1);
+}
+.odot { width: 6px; height: 6px; border-radius: 50%; background: #c7d2fe; }
+.odot.on  { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+.odot.off { background: #ef4444; }
+
+/* sensor */
+.sensor-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.sensor-tile {
+  background: white; border: 1.5px solid #e0e7ff;
+  border-radius: 20px; padding: 18px 16px;
+  box-shadow: 0 4px 16px rgba(99,102,241,.08);
+}
+.sensor-tile .big  { font-size: 30px; font-weight: 800; color: #6366f1; line-height: 1; letter-spacing: -.03em; }
+.sensor-tile .unit { font-size: 10px; color: #a5b4fc; margin-top: 4px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.sensor-tile .lbl  { font-size: 11px; color: #9ca3af; margin-top: 10px; font-weight: 600; }
+
+/* esp status */
+.esp-row {
+  background: white; border: 1.5px solid #e0e7ff; border-radius: 16px;
+  padding: 12px 16px; margin-bottom: 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 4px 16px rgba(99,102,241,.06);
+}
+.esp-row-left { font-size: 13px; font-weight: 600; color: #1e1b4b; }
+.esp-row-left small { display: block; font-size: 10px; color: #9ca3af; margin-top: 2px; font-weight: 500; }
+.mode-pill { font-size: 10px; font-weight: 700; letter-spacing: .06em; padding: 4px 12px; border-radius: 99px; }
+.m-sim  { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+.m-live { background: #dcfce7; color: #14532d; border: 1px solid #bbf7d0; }
+.m-off  { background: #fee2e2; color: #7f1d1d; border: 1px solid #fecaca; }
+
+/* section title */
+.stitle { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #a5b4fc; margin-bottom: 12px; }
+
+/* LED grid */
+.led-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.led-btn {
+  background: white; border: 1.5px solid #e0e7ff; border-radius: 24px;
+  padding: 20px 14px 18px; display: flex; flex-direction: column; align-items: center; gap: 12px;
+  cursor: pointer; transition: background .2s, border-color .2s, transform .15s, box-shadow .2s;
+  user-select: none; -webkit-user-select: none;
+  box-shadow: 0 2px 10px rgba(99,102,241,.06);
+}
+.led-btn:active { transform: scale(0.95); }
+.led-btn.on {
+  background: color-mix(in srgb, var(--lc) 10%, white);
+  border-color: var(--lc);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--lc) 30%, transparent);
+}
+.led-circle {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: #f1f5f9; border: 2px solid #e2e8f0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; transition: background .25s, border-color .25s, box-shadow .25s;
+}
+.led-btn.on .led-circle {
+  background: color-mix(in srgb, var(--lc) 18%, white);
+  border-color: var(--lc);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--lc) 50%, transparent),
+              0 0 32px color-mix(in srgb, var(--lc) 25%, transparent);
+}
+.led-label { font-size: 13px; font-weight: 700; color: #64748b; }
+.led-btn.on .led-label { color: #1e1b4b; }
+.led-status {
+  font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: #c7d2fe; background: #f1f5f9; border-radius: 99px; padding: 3px 10px;
+  transition: background .2s, color .2s;
+}
+.led-btn.on .led-status {
+  background: color-mix(in srgb, var(--lc) 15%, white);
+  color: var(--lc);
+}
+
+/* all on/off */
+.all-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.big-btn {
+  padding: 16px; border-radius: 18px; border: none;
+  font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: transform .15s, box-shadow .15s;
+}
+.big-btn:active { transform: scale(0.96); }
+.btn-on  { background: linear-gradient(135deg,#6366f1,#8b5cf6); color: white; box-shadow: 0 8px 20px rgba(99,102,241,.35); }
+.btn-off { background: white; color: #ef4444; border: 1.5px solid #fecaca; box-shadow: 0 4px 12px rgba(239,68,68,.1); }
+
+/* command */
+.cmd-area {
+  background: white; border: 1.5px solid #e0e7ff; border-radius: 18px;
+  padding: 6px 6px 6px 18px; display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 2px 10px rgba(99,102,241,.06); margin-bottom: 24px;
+  transition: border-color .2s;
+}
+.cmd-area:focus-within { border-color: #818cf8; }
+.cmd-input {
+  flex: 1; background: none; border: none; outline: none;
+  font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500;
+  color: #1e1b4b; padding: 10px 0; caret-color: #6366f1;
+}
+.cmd-input::placeholder { color: #c7d2fe; }
+.cmd-send {
+  background: linear-gradient(135deg,#6366f1,#8b5cf6); color: white;
+  border: none; border-radius: 12px; padding: 11px 18px;
+  font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: transform .15s;
+}
+.cmd-send:active { transform: scale(0.96); }
+
+/* log */
+.log-wrap {
+  background: white; border: 1.5px solid #e0e7ff; border-radius: 20px;
+  overflow: hidden; box-shadow: 0 4px 16px rgba(99,102,241,.06);
+}
+.log-head {
+  background: linear-gradient(135deg,#6366f1,#8b5cf6);
+  padding: 11px 16px; font-size: 10px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: white;
+  display: flex; align-items: center; gap: 6px;
+}
+.log-dot { width: 5px; height: 5px; border-radius: 50%; background: #a5f3a5; animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.log-body {
+  height: 150px; overflow-y: auto; padding: 12px 16px;
+  font-size: 11px; line-height: 2; font-weight: 500;
+  scrollbar-width: thin; scrollbar-color: #e0e7ff transparent;
+}
+.le { display: flex; gap: 10px; }
+.lt { color: #c7d2fe; flex-shrink: 0; }
+.lm      { color: #94a3b8; word-break: break-all; }
+.lm.ok   { color: #16a34a; }
+.lm.err  { color: #dc2626; }
+.lm.info { color: #6366f1; }
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pop    { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+.pop { animation: pop .2s ease; }
+.page > * { animation: fadeIn .35s ease both; }
+.page > *:nth-child(1){animation-delay:.04s}
+.page > *:nth-child(2){animation-delay:.08s}
+.page > *:nth-child(3){animation-delay:.12s}
+.page > *:nth-child(4){animation-delay:.16s}
+.page > *:nth-child(5){animation-delay:.20s}
+.page > *:nth-child(6){animation-delay:.24s}
+.page > *:nth-child(7){animation-delay:.28s}
+.page > *:nth-child(8){animation-delay:.32s}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="page">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Kelompok 3</h1>
+      <p>ESP8266 LED Controller</p>
+    </div>
+    <div class="online-dot">
+      <div class="odot" id="odot"></div>
+      <span id="otxt">Konek...</span>
+    </div>
+  </div>
+
+  <div class="sensor-strip">
+    <div class="sensor-tile">
+      <div class="big" id="s-volt">—</div>
+      <div class="unit">Volt</div>
+      <div class="lbl">Tegangan A0</div>
+    </div>
+    <div class="sensor-tile">
+      <div class="big" id="s-raw">—</div>
+      <div class="unit">ADC</div>
+      <div class="lbl">Nilai Raw</div>
+    </div>
+  </div>
+
+  <div class="esp-row">
+    <div class="esp-row-left">
+      NodeMCU ESP8266
+      <small id="esp-sub">Mengecek...</small>
+    </div>
+    <span class="mode-pill m-sim" id="esp-badge">SIM</span>
+  </div>
+
+  <div class="stitle">Kontrol LED</div>
+  <div class="led-grid" id="led-grid"></div>
+
+  <div class="stitle">Kendali Cepat</div>
+  <div class="all-row">
+    <button class="big-btn btn-on"  id="btn-all-on"  onclick="allOn()">💡 Semua ON</button>
+    <button class="big-btn btn-off" id="btn-all-off" onclick="allOff()">🌑 Semua OFF</button>
+  </div>
+
+  <div class="stitle">Perintah Manual</div>
+  <div class="cmd-area">
+    <input class="cmd-input" id="cmd-in" placeholder="Ketik perintah, mis: LED3_ON"
+           onkeydown="if(event.key==='Enter')sendCustom()"/>
+    <button class="cmd-send" onclick="sendCustom()">Kirim</button>
+  </div>
+
+  <div class="stitle">Log Aktivitas</div>
+  <div class="log-wrap">
+    <div class="log-head"><div class="log-dot"></div>Riwayat</div>
+    <div class="log-body" id="log"></div>
+  </div>
+
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const LEDS = [
+  { name:'Merah',  emoji:'🔴', color:'#ef4444', pin:'D1' },
+  { name:'Kuning', emoji:'🟡', color:'#f59e0b', pin:'D2' },
+  { name:'Hijau',  emoji:'🟢', color:'#22c55e', pin:'D5' },
+  { name:'Biru',   emoji:'🔵', color:'#3b82f6', pin:'D6' },
+  { name:'Putih',  emoji:'⚪', color:'#94a3b8', pin:'D7' },
+];
+let leds = [false, false, false, false, false];
+
+// Build LED buttons
+const grid = document.getElementById('led-grid');
+LEDS.forEach((cfg, i) => {
+  const btn = document.createElement('div');
+  btn.className = 'led-btn'; btn.id = 'lb-' + i;
+  btn.style.setProperty('--lc', cfg.color);
+  btn.innerHTML =
+    '<div class="led-circle">' + cfg.emoji + '</div>' +
+    '<div class="led-label">' + cfg.name + '</div>' +
+    '<div class="led-status" id="ls-' + i + '">off</div>';
+  btn.onclick = () => toggleLed(i);
+  grid.appendChild(btn);
+});
+
+const socket = io();
+socket.on('connect',      () => { setConn(true);  addLog('Terhubung ke server', 'ok'); });
+socket.on('disconnect',   () => { setConn(false); addLog('Koneksi terputus', 'err'); });
+socket.on('state-update', s  => { if (s.leds) updateLeds(s.leds); if (s.sensor) updateSensor(s.sensor); });
+socket.on('sensor-data',  d  => updateSensor(d));
+socket.on('esp-reply',    m  => addLog('← ' + m, 'ok'));
+socket.on('log',          e  => addLog(e.msg, e.type));
+socket.on('log-history',  arr => arr.forEach(e => addLog(e.msg, e.type)));
+
+async function checkStatus() {
+  try {
+    const d = await (await fetch('/api/status')).json();
+    const b = document.getElementById('esp-badge'), s = document.getElementById('esp-sub');
+    if (d.simMode)        { b.textContent = 'SIM'; b.className = 'mode-pill m-sim';  s.textContent = 'Mode simulasi aktif'; }
+    else if (d.espOnline) { b.textContent = 'ON';  b.className = 'mode-pill m-live'; s.textContent = 'ESP8266 terhubung'; }
+    else                  { b.textContent = 'OFF'; b.className = 'mode-pill m-off';  s.textContent = 'Tidak merespons'; }
+    if (d.leds)   updateLeds(d.leds);
+    if (d.sensor) updateSensor(d.sensor);
+  } catch {}
+}
+checkStatus(); setInterval(checkStatus, 6000);
+
+function setConn(on) {
+  document.getElementById('odot').className = 'odot ' + (on ? 'on' : 'off');
+  document.getElementById('otxt').textContent = on ? 'Online' : 'Offline';
+}
+
+function updateSensor(d) {
+  const set = (id, v) => {
+    const el = document.getElementById(id);
+    if (el && el.textContent !== String(v)) {
+      el.textContent = v;
+      el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+    }
+  };
+  set('s-volt', d.voltage !== undefined ? d.voltage : '—');
+  set('s-raw',  d.raw     !== undefined ? d.raw     : '—');
+}
+
+function updateLeds(arr) {
+  arr.forEach((on, i) => {
+    leds[i] = on;
+    const btn = document.getElementById('lb-' + i);
+    const st  = document.getElementById('ls-' + i);
+    if (btn) btn.classList.toggle('on', on);
+    if (st)  st.textContent = on ? 'on' : 'off';
+  });
+}
+
+function toggleLed(i) {
+  const next = !leds[i]; leds[i] = next;
+  const btn = document.getElementById('lb-' + i);
+  const st  = document.getElementById('ls-' + i);
+  if (btn) btn.classList.toggle('on', next);
+  if (st)  st.textContent = next ? 'on' : 'off';
+  sendCmd('LED' + (i + 1) + '_' + (next ? 'ON' : 'OFF'));
+}
+
+function allOn() {
+  leds = [true, true, true, true, true];
+  updateLeds(leds);
+  sendCmd('ALL_ON');
+}
+
+function allOff() {
+  leds = [false, false, false, false, false];
+  updateLeds(leds);
+  sendCmd('ALL_OFF');
+}
+
+function sendCmd(cmd) { addLog('→ ' + cmd, 'info'); socket.emit('send-command', cmd); }
+
+function sendCustom() {
+  const inp = document.getElementById('cmd-in'), val = inp.value.trim().toUpperCase();
+  if (val) { sendCmd(val); inp.value = ''; }
+}
+
+function addLog(msg, type) {
+  const box = document.getElementById('log'), now = new Date().toLocaleTimeString('id-ID');
+  const row = document.createElement('div'); row.className = 'le';
+  row.innerHTML = '<span class="lt">' + now + '</span><span class="lm ' + (type||'') + '">' + msg + '</span>';
+  box.insertBefore(row, box.firstChild);
+  while (box.children.length > 80) box.removeChild(box.lastChild);
+}
+</script>
+</body>
+</html>
