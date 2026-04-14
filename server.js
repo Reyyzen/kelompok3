@@ -7,7 +7,7 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
 const PORT = process.env.PORT || 3000;
-const SIM_MODE = true;
+const SIM_MODE = false;
 const ESP_KEY = 'kelompok3key';
 const LED_NAMES = ['Merah', 'Kuning', 'Hijau', 'Biru', 'Putih'];
 
