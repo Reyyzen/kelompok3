@@ -177,6 +177,12 @@ body {
 .page > *:nth-child(6){animation-delay:.24s}
 .page > *:nth-child(7){animation-delay:.28s}
 .page > *:nth-child(8){animation-delay:.32s}
+
+.members-section { margin: 12px 0 20px; }
+.members-title { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.35); margin-bottom: 10px; }
+.members-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+.m-chip { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); border-radius: 99px; padding: 5px 12px 5px 6px; font-family: "Poppins", sans-serif; font-size: 11px; font-weight: 500; color: rgba(255,255,255,.65); }
+.m-av { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -192,6 +198,12 @@ body {
       <div class="odot" id="odot"></div>
       <span id="otxt">Konek...</span>
     </div>
+  </div>
+
+  <!-- Anggota Tim -->
+  <div class="members-section">
+    <div class="members-title">Anggota Tim</div>
+    <div class="members-grid" id="members-grid"></div>
   </div>
 
   <div class="sensor-strip">
@@ -263,6 +275,24 @@ LEDS.forEach((cfg, i) => {
   grid.appendChild(btn);
 });
 
+
+const TEAM = [
+  { name:'Riska Dania',       color:'#f48fb1', bg:'rgba(244,143,177,.2)' },
+  { name:'Yuni Aulia',        color:'#ce93d8', bg:'rgba(206,147,216,.2)' },
+  { name:'Siti Asiyah',       color:'#80cbc4', bg:'rgba(128,203,196,.2)' },
+  { name:'Sakira Nursani',    color:'#ffcc02', bg:'rgba(255,204,2,.2)'   },
+  { name:'Selvia Rahmayani',  color:'#ff8a65', bg:'rgba(255,138,101,.2)' },
+  { name:'Riyan Ardiansyah',  color:'#4fc3f7', bg:'rgba(79,195,247,.2)'  },
+  { name:'Siti Nurlela',      color:'#a5d6a7', bg:'rgba(165,214,167,.2)' },
+];
+const mGrid = document.getElementById('members-grid');
+TEAM.forEach(m => {
+  const initials = m.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const chip = document.createElement('div');
+  chip.className = 'm-chip';
+  chip.innerHTML = '<div class="m-av" style="background:'+m.bg+';color:'+m.color+';border:1.5px solid '+m.color+'44">'+initials+'</div><span style="color:'+m.color+'">'+m.name+'</span>';
+  mGrid.appendChild(chip);
+});
 const socket = io();
 socket.on('connect',      () => { setConn(true);  addLog('Terhubung ke server', 'ok'); });
 socket.on('disconnect',   () => { setConn(false); addLog('Koneksi terputus', 'err'); });
